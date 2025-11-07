@@ -275,42 +275,6 @@ def connector(request, mysql_connector, postgres_connector):
         return postgres_connector
 
 
-# ==================== Alternative: Transaction-Based Cleanup ====================
-
-@pytest.fixture(scope="function")
-def mysql_transaction(mysql_engine, clean_mysql_db):
-    """
-    Alternative fixture using transaction rollback for cleanup.
-    Faster than dropping tables, but test must not commit.
-    
-    Usage: Only use this if your tests don't call commit()
-    """
-    connection = mysql_engine.connect()
-    transaction = connection.begin()
-    
-    yield connection
-    
-    transaction.rollback()
-    connection.close()
-
-
-@pytest.fixture(scope="function")
-def postgres_transaction(postgres_engine, clean_postgres_db):
-    """
-    Alternative fixture using transaction rollback for cleanup.
-    Faster than dropping tables, but test must not commit.
-    
-    Usage: Only use this if your tests don't call commit()
-    """
-    connection = postgres_engine.connect()
-    transaction = connection.begin()
-    
-    yield connection
-    
-    transaction.rollback()
-    connection.close()
-
-
 # ==================== Test Data Constants ====================
 
 @pytest.fixture
@@ -335,25 +299,3 @@ def expected_order_columns():
 def expected_product_columns():
     """Expected column names in products table."""
     return ["product_id", "product_name", "price"]
-
-
-# ==================== Helper Fixtures ====================
-
-@pytest.fixture
-def sample_users():
-    """Sample user data for testing."""
-    return [
-        {"name": "Alice", "email": "alice@example.com", "age": 30},
-        {"name": "Bob", "email": "bob@example.com", "age": 25},
-        {"name": "Charlie", "email": "charlie@example.com", "age": 35},
-    ]
-
-
-@pytest.fixture
-def sample_orders():
-    """Sample order data for testing."""
-    return [
-        {"user_id": 1, "product": "Laptop", "amount": 999.99},
-        {"user_id": 2, "product": "Mouse", "amount": 29.99},
-        {"user_id": 1, "product": "Keyboard", "amount": 79.99},
-    ]
