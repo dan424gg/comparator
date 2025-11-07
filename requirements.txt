@@ -1,0 +1,5 @@
+pandas
+pymsql
+sqlalchemy
+psycopg2-binary
+cryptography
